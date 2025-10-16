@@ -1,0 +1,144 @@
+PROJECT CONTEXT: RANGE FINDER WITH STM32F103C8T6 AND VL53L0X
+
+You are assisting with a range finder project that uses an STM32F103C8T6 microcontroller (Blue Pill) and a VL53L0X Time-of-Flight sensor. The project is organized as follows:
+
+KEY FILE LOCATIONS AND PURPOSES:
+
+1. DRIVER FILES:
+   Path: Src/vl53l0x.c and Inc/vl53l0x.h
+   Purpose: Custom driver for VL53L0X sensor
+   Key Features:
+   - Sensor initialization
+   - High accuracy mode configuration
+   - Distance measurement with filtering
+   - Signal quality validation
+
+2. MAIN APPLICATION:
+   Path: Src/main.c
+   Purpose: Main application logic
+   Key Features:
+   - Hardware initialization
+   - 5Hz measurement loop
+   - LED status indication
+   - UART communication
+   - Command processing
+
+3. PERIPHERAL CONFIGURATION:
+   Path: Src/gpio.c, Src/i2c.c, Src/usart.c
+   Purpose: Hardware peripheral initialization
+   Associated Headers: Inc/gpio.h, Inc/i2c.h, Inc/usart.h
+
+4. DOCUMENTATION:
+   Path: README.md
+   Purpose: Project documentation and configuration guide
+
+SYSTEM CONFIGURATION:
+
+1. Clock Setup:
+   - SYSCLK: 72 MHz
+   - APB1: 36 MHz
+   - APB2: 72 MHz
+   - HSE: 8 MHz crystal
+
+2. Pin Mapping:
+   - I2C1_SCL: PB6
+   - I2C1_SDA: PB7
+   - UART1_TX: PA9
+   - UART1_RX: PA10
+   - LED: PC13 (active low)
+
+3. Communication Settings:
+   - I2C: 100 kHz, 7-bit addressing
+   - UART: 115200 baud, 8N1
+
+KEY PARAMETERS (in vl53l0x.h):
+- VL53L0X_HIGH_ACCURACY_TIMING_BUDGET: Measurement duration (µs)
+- VL53L0X_SIGNAL_RATE_LIMIT: Minimum signal strength (MCPS)
+- VL53L0X_VALID_READS_BEFORE_UPDATE: Required consecutive valid readings
+- VL53L0X_MAX_MEASUREMENT_JUMP: Maximum allowed distance change (mm)
+
+OPERATIONAL BEHAVIOR:
+
+1. Initialization Sequence:
+   - Hardware peripherals setup
+   - VL53L0X sensor initialization
+   - High accuracy mode configuration
+   - 10-second LED blinking period
+
+2. Main Loop Operation:
+   - 5Hz measurement cycle (200ms)
+   - Distance validation and filtering
+   - UART data transmission
+   - LED status update
+   - Command processing
+
+3. Data Format:
+   UART Output: "Dist: XXX mm, Status: Y, Signal: ZZZ"
+   Where:
+   - XXX: Distance in millimeters
+   - Y: Measurement status code
+   - ZZZ: Signal strength
+
+4. Status Codes:
+   - 0: Normal measurement
+   - 4: Weak signal
+   - 5: High accuracy mode
+   - 6-8: Various errors
+
+COMMAND INTERFACE:
+
+Available Commands:
+- "i2c_bar": Performs I2C bus scan
+Response Format: I2C address map in hex format
+
+ERROR HANDLING:
+
+1. Sensor Validation:
+   - Signal strength threshold
+   - Status code checking
+   - Consecutive reading validation
+   - Jump detection between measurements
+
+2. Communication Errors:
+   - I2C timeout handling
+   - UART buffer overflow protection
+   - Command buffer size limits
+
+IMPORTANT CONSIDERATIONS:
+
+1. Timing:
+   - Main loop runs at 5Hz
+   - Initial 10s startup period
+   - I2C operations have 100ms timeout
+
+2. Memory Usage:
+   - Small buffers for UART (16 bytes)
+   - Static allocation for sensor data
+   - No dynamic memory allocation
+
+3. Critical Sections:
+   - UART interrupt handling
+   - I2C communication timing
+   - LED status updates
+
+When modifying or extending the project:
+1. Maintain the 5Hz measurement cycle
+2. Preserve error checking mechanisms
+3. Follow the existing parameter validation scheme
+4. Keep UART output format consistent
+5. Consider timing constraints for I2C operations
+
+The system is designed for reliability and accuracy, with emphasis on:
+- Measurement validation
+- Error detection
+- User feedback
+- Configuration flexibility
+
+Use these guidelines when:
+- Modifying sensor parameters
+- Adding new commands
+- Extending functionality
+- Debugging issues
+- Optimizing performance
+
+END OF PROJECT CONTEXT
